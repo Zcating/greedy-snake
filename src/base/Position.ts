@@ -1,4 +1,4 @@
-enum Direction {
+export enum Direction {
     None,
     Left,
     Up,
@@ -6,34 +6,25 @@ enum Direction {
     Down
 }
 
-class Coordinate {
-    private x = 0;
-    private y = 0;
+export class Position {
+    public x = 0;
+    public y = 0;
 
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
     }
 
-
-    setX(x: number) {
-        this.x = x;
+    add(position: Position) {
+        return new Position(this.x + position.x, this.y + position.y);
     }
 
-    setY(y: number) {
-        this.y = y;
+    isEqual(position: Position) {
+        return this.x === position.x && this.y === position.y;
     }
 
-    add(coordinate: Coordinate) {
-        return new Coordinate(this.x + coordinate.x, this.y + coordinate.y);
-    }
-
-    isEqual(coordinate: Coordinate) {
-        return this.x === coordinate.x && this.y === coordinate.y;
-    }
-
-    getAllAdjCoordinates(): Array<Coordinate> {
-        const result: Array<Coordinate> = [];
+    getAllAdjPositions(): Array<Position> {
+        const result: Array<Position> = [];
         const dxy = [
             0, -1,
             -1, 0,
@@ -41,15 +32,15 @@ class Coordinate {
             0, 1
         ];
         for (let i = 0; i < dxy.length; i += 2) {
-            result.push(new Coordinate(this.x + dxy[i], this.x + dxy[i+1]));
+            result.push(new Position(this.x + dxy[i], this.x + dxy[i+1]));
         }
 
         return result;
     }
 
-    getDirectionTo(coordinate: Coordinate): Direction {
-        const dx = coordinate.x - this.x;
-        const dy = coordinate.y - this.y;
+    getDirectionTo(position: Position): Direction {
+        const dx = position.x - this.x;
+        const dy = position.y - this.y;
         if (dx === 0 && dy === -1) {
             return Direction.Left;
         }
