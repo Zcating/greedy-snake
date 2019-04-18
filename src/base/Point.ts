@@ -1,5 +1,5 @@
 import { Position } from "./Position";
-enum PointType {
+export enum PointType {
     Empty,
     Wall,
     Food,
@@ -10,14 +10,14 @@ enum PointType {
     TestPath
 }
 export class Point {
-    private type = PointType.Empty;
-    private dist = Infinity;
-    private visited = false;
-    private parent = new Position(-1, -1);
+    type = PointType.Empty;
+    dist = Infinity;
+    visited = false;
+    parent = new Position(-1, -1);
 
     constructor() {
 
     }
 
-
+    
 }

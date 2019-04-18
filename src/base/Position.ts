@@ -7,6 +7,9 @@ export enum Direction {
 }
 
 export class Position {
+
+    public static INVALID = new Position(-1, -1);
+
     public x = 0;
     public y = 0;
 
