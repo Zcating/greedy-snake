@@ -1,6 +1,29 @@
 import { Point, PointType } from "src/base/Point";
 import { Position, Direction } from 'src/base/Position';
 
+class Queue<T> {
+    private content : T[] = [];
+    constructor() {
+    }
+
+    public front() {
+        return this.content[0];
+    }
+
+    public push(value:T) {
+        this.content.push(value);
+    }
+
+    public pop() {
+        this.content.splice(0, 1);
+    }
+
+    public isEmpty() {
+        return this.content.length === 0;
+    }
+
+}
+
 class Matrix<T> {
     private width: number;
     private height: number;
@@ -136,6 +159,72 @@ export class GameMap {
             const parent = this.getPoint(tmp).parent;
             path.unshift(parent.getDirectionTo(tmp));
             tmp = parent;
+        }
+    }
+
+
+    private findMinPath(from: Position, to: Position, direction: Direction, path: Array<Direction>) {
+        if (!(this.isInside(from) && this.isInside(to))) {
+            return;
+        }
+
+        this.reset();
+        this.getPoint(from).dist = 0;
+        
+        const queue = new Queue<Position>();
+        queue.push(from);
+        while (!queue.isEmpty()) {
+            const currentPosition = queue.front();
+            queue.pop();
+
+            if (currentPosition.isEqual(to)) {
+                this.constructPath(from, to, path);
+                break;
+            }
+
+            const currentPoint = this.getPoint(currentPosition);
+            const bestDirection = currentPosition.isEqual(from) ? direction : currentPoint.parent.getDirectionTo(currentPosition);
+            const adjPositions = currentPosition.getAllAdjPositions();
+
+            // find the current best direction.
+            for (let i = 0; i < adjPositions.length; i++) {
+                if (bestDirection === currentPosition.getDirectionTo(adjPositions[i])) {
+                    const tmp = adjPositions[0];
+                    adjPositions[0] = adjPositions[i];
+                    adjPositions[i] = tmp;
+                    break;
+                }
+            }
+
+            for (const adjPosition of adjPositions) {
+                const adjPoint = this.getPoint(adjPosition);
+                // to judge the point if acceptable.
+                if (this.isEmpty(adjPosition) && adjPoint.dist === Infinity) {
+                    adjPoint.parent = currentPosition;
+                    adjPoint.dist = currentPoint.dist + 1;
+                    queue.push(adjPosition);
+                }
+            }
+        }    
+    }
+
+    public findMaxPath(from: Position, to: Position, direction: Direction, path: Direction[]) {
+        if (!(this.isInside(from) && this.isInside(to))) {
+            return;
+        }
+        this.reset();
+        
+
+    }
+
+    private reset () {
+        const width = this.width;
+        const height = this.height; 
+        for (let i = 1; i < width - 1; ++i) {
+            for (let j = 1; j < height - 1; ++j) {
+                this.matrix.at(i, j).dist = Infinity; // INF == INT_MAX
+                this.matrix.at(i, j).visited = false;
+            }
         }
     }
 
