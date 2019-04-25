@@ -52,9 +52,9 @@ class Matrix<T> {
     }
 }
 export class GameMap {
-    private matrix: Matrix<Point>;
+    public food = Position.INVALID;
 
-    private food = Position.INVALID;
+    private matrix: Matrix<Point>;
 
     constructor(width: number, height: number) {
         this.matrix = new Matrix(width, height);
@@ -131,39 +131,8 @@ export class GameMap {
         }
         return true;
     }
-
-
-    private getEmptyPositions() {
-        const emptyPositions = [];
-        const width = this.width;
-        const height = this.height;
-        for (let x = 0; x < width - 1; x++) {
-            for(let y = 0; y < height - 1; y++) {
-                if (this.matrix.at(x, y).type === PointType.Empty) {
-                    emptyPositions.push(new Position(x, y));
-                }
-            }
-        }
-        return emptyPositions;
-    }
-
-    private estimateDestination(from: Position, to: Position) {
-        const dx = Math.abs(from.x - to.x);
-        const dy = Math.abs(from.y - to.y);
-        return dx + dy;
-    }
-
-    private constructPath(from: Position, to: Position, path: Array<Direction>) {
-        let tmp = to;
-        while (!tmp.isEqual(Position.INVALID) && !(tmp.isEqual(from)) ) {
-            const parent = this.getPoint(tmp).parent;
-            path.unshift(parent.getDirectionTo(tmp));
-            tmp = parent;
-        }
-    }
-
-
-    private findMinPath(from: Position, to: Position, direction: Direction, path: Array<Direction>) {
+    
+    findMinPath(from: Position, to: Position, direction: Direction, path: Array<Direction>) {
         if (!(this.isInside(from) && this.isInside(to))) {
             return;
         }
@@ -216,6 +185,36 @@ export class GameMap {
         
 
     }
+
+    private getEmptyPositions() {
+        const emptyPositions = [];
+        const width = this.width;
+        const height = this.height;
+        for (let x = 0; x < width - 1; x++) {
+            for(let y = 0; y < height - 1; y++) {
+                if (this.matrix.at(x, y).type === PointType.Empty) {
+                    emptyPositions.push(new Position(x, y));
+                }
+            }
+        }
+        return emptyPositions;
+    }
+
+    private estimateDestination(from: Position, to: Position) {
+        const dx = Math.abs(from.x - to.x);
+        const dy = Math.abs(from.y - to.y);
+        return dx + dy;
+    }
+
+    private constructPath(from: Position, to: Position, path: Array<Direction>) {
+        let tmp = to;
+        while (!tmp.isEqual(Position.INVALID) && !(tmp.isEqual(from)) ) {
+            const parent = this.getPoint(tmp).parent;
+            path.unshift(parent.getDirectionTo(tmp));
+            tmp = parent;
+        }
+    }
+
 
     private reset () {
         const width = this.width;
